@@ -3,6 +3,8 @@
 
 class TLogger
 {
+public:
+  void dummy();
 };
 
 #endif // TLOGGER_H

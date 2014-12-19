@@ -35,8 +35,8 @@ set(GMOCK_INCLUDE "${GMOCK_INCLUDE_DIR}/gmock.h")
 set(TESTS_POSTFIX Tests)
 set(MOCKS_POSTFIX Mocks)
 
-set(TLOGGER_LIB_TESTS_DIR one_minute_changes${TESTS_POSTFIX})
-set(TLOGGER_LIB_MOCKS_DIR one_minute_changes${MOCKS_POSTFIX})
+set(TLOGGER_LIB_TESTS_DIR TLogger${TESTS_POSTFIX})
+set(TLOGGER_LIB_MOCKS_DIR TLogger${MOCKS_POSTFIX})
 #set(MAIN_TESTS_DIR Main${TESTS_POSTFIX})
 
 #project includes
@@ -55,7 +55,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${EXTRA_WARNING_FLAGS}")
 #file(GLOB MAIN_TEST_FILES ${TEST_SRC_DIR}/${MAIN_TESTS_DIR}/*.cpp)
 file(GLOB TEST_MAIN ${TEST_SRC_DIR}/*.cpp)
 
-file(GLOB ONE_MINUTE_CHANGES_TEST_FILES ${TEST_SRC_DIR}/${ONE_MINUTE_CHANGES_TESTS_DIR}/*.cpp)
+file(GLOB TLOGGER_LIB_TEST_FILES ${TEST_SRC_DIR}/${TLOGGER_LIB_TESTS_DIR}/*.cpp)
 
 #tests
 enable_testing()
@@ -79,7 +79,7 @@ add_custom_command(TARGET coverage
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 add_custom_command(TARGET coverage
-	COMMAND rm -rf ${TLOGGER_LIB_COVERAGE_RAW_FILES} && ../${TEST_EXE}  && lcov -d  ${SOURCE_RAW_FILES_DIR} --capture --output-file tlooger.info && genhtml tlogger.info 
+	COMMAND rm -rf ${TLOGGER_LIB_COVERAGE_RAW_FILES} && ../${TEST_EXE}  && lcov -d  ${SOURCE_RAW_FILES_DIR} --capture --output-file tlogger.info && genhtml tlogger.info 
 	WORKING_DIRECTORY ${COVERAGE_DIR})
 
 add_dependencies(coverage ${TEST_EXE})
