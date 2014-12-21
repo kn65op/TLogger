@@ -40,3 +40,6 @@ install_manifest.txt
 .*.swp
 *.stackdump
 
+#project
+Test/Exe
+Test/coverage

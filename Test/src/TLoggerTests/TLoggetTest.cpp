@@ -10,5 +10,4 @@ struct TLoggerTest : Test
 
 TEST_F(TLoggerTest, DUMMY)
 {
-  ASSERT_TRUE(true);
 }
