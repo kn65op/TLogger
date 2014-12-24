@@ -6,6 +6,7 @@ set(SRC_DIR "Code")
 #set(MAIN_FILE "${MAIN_SRC_DIR}/main.cpp")
 set(DEBUG_BIN_DIR "Debug")
 set(RELEASE_BIN_DIR "Release")
+set(LIB_NAME "TLogger")
 
 #project
 project (tlogger)
@@ -52,17 +53,18 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 		add_definitions(--coverage)
 	endif ("${NO_COVERAGE}" STREQUAL "true")
 	file(MAKE_DIRECTORY ${DEBUG_BIN_DIR})
-	#	set(EXE_FILE ${DEBUG_BIN_DIR}/${PROJECT_NAME})
+	set(LIBRARY_OUTPUT_DIRECTORY ${DEBUG_BIN_DIR})
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${DEBUG_BIN_DIR})
 elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 	file(MAKE_DIRECTORY ${RELEASE_BIN_DIR})
-        set(EXE_FILE ${RELEASE_BIN_DIR}/${PROJECT_NAME})
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${RELEASE_BIN_DIR})
 else (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 	message(FATAL_ERROR "Invalid build type. Can be Debug | Release")
 endif (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 
-#add_executable(${EXE_FILE} ${MAIN_FILE} ${MAIN_FILES} ${ONE_MINUTE_CHANGES_FILES})
-add_library(TLogger ${TLOGGER_LIB_FILES})
+#add_executable(${LIB_OUTPUT_FILE} ${MAIN_FILE} ${MAIN_FILES} ${ONE_MINUTE_CHANGES_FILES})
+add_library(${LIB_NAME} ${TLOGGER_LIB_FILES})
 
 #libraries
-#TARGET_LINK_LIBRARIES(${EXE_FILE} ${Boost_LIBRARIES} )
+#TARGET_LINK_LIBRARIES(${LIB_OUTPUT_FILE} ${Boost_LIBRARIES} )
 
