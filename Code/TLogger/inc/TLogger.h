@@ -13,64 +13,65 @@ namespace TLogger
 
 #define LOG LoggerFacade::getLoggerFacade().getStreamWithDate(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 
- enum class LogFileOnEntry
- {
+enum class LogFileOnEntry
+{
   OVERRIDE,
   APPEND,
   THROW_EXCEPTION
- };
+};
 
- enum class LogFileOnExit
- {
+enum class LogFileOnExit
+{
   REMOVE,
   DO_NOTHING
- };
+};
 
- class Logger
- {
+class Logger
+{
 public:
-  ~Logger ()
+
+  ~Logger()
   {
-   log_file << "\nremoving logger\n";
-   switch (file_on_exit)
-     {
-     case LogFileOnExit::REMOVE:
-      {
-       std::remove (filename.c_str ());
-       break;
-      }
-      case LogFileOnExit::DO_NOTHING:	// Fallthrough
-       default:
-      {
-      }
-     }
+    log_file << "\nremoving logger\n";
+    switch (file_on_exit)
+    {
+    case LogFileOnExit::REMOVE:
+    {
+      std::remove(filename.c_str());
+      break;
+    }
+    case LogFileOnExit::DO_NOTHING: // Fallthrough
+    default:
+    {
+    }
+    }
   }
 private:
-    friend class LoggerFacade;
+  friend class LoggerFacade;
   friend class std::unique_ptr < Logger >;
 
-Logger (LogFileOnEntry p_file_on_entry, LogFileOnExit p_file_on_exit):
-  file_on_entry (p_file_on_entry), file_on_exit (p_file_on_exit)
+  Logger(LogFileOnEntry p_file_on_entry, LogFileOnExit p_file_on_exit) :
+    file_on_entry(p_file_on_entry), file_on_exit(p_file_on_exit)
   {
-   switch (file_on_entry)
-     {
-     case LogFileOnEntry::OVERRIDE:
-      log_file.open (filename, std::ios::trunc);
+    switch (file_on_entry)
+    {
+    case LogFileOnEntry::OVERRIDE:
+      log_file.open(filename, std::ios::trunc);
       break;
-     case LogFileOnEntry::APPEND:
-      log_file.open (filename, std::ios::app);
+    case LogFileOnEntry::APPEND:
+      log_file.open(filename, std::ios::app);
       break;
-     case LogFileOnEntry::THROW_EXCEPTION:
-      throw std::runtime_error ("Not yet implemeted");
-     }
-   log_file << "creating logger";
+    case LogFileOnEntry::THROW_EXCEPTION:
+      throw std::runtime_error("Not yet implemeted");
+    }
+    log_file << "creating logger";
   }
 
-  std::ostream & getStream ()
+  std::ostream & getStream()
   {
     log_file.close();
-      log_file.open (filename, std::ios::app);
-   return log_file;
+    log_file.open(filename, std::ios::app);
+    return log_file;
   }
 
   const std::string filename = "TLogger.log";
@@ -78,98 +79,104 @@ Logger (LogFileOnEntry p_file_on_entry, LogFileOnExit p_file_on_exit):
 
   LogFileOnEntry file_on_entry;
   LogFileOnExit file_on_exit;
- };
+};
 
- class LoggerFacade
- {
- private:
-   class LoggerFacadeInstance;
+class LoggerFacade
+{
+private:
+  class LoggerFacadeInstance;
 public:
-  LoggerFacade (LogFileOnEntry p_file_on_entry =
-		LogFileOnEntry::OVERRIDE,
-		LogFileOnExit p_file_on_exit = LogFileOnExit::DO_NOTHING)
+
+  LoggerFacade(LogFileOnEntry p_file_on_entry = LogFileOnEntry::OVERRIDE,
+               LogFileOnExit p_file_on_exit = LogFileOnExit::DO_NOTHING)
   {
-   if (!ref_count++)
-     {
-      logger_facade_inst_priv.reset (new LoggerFacadeInstance (true,
-                                              p_file_on_entry,
-                                              p_file_on_exit));
-      getStreamWithDate () << "Starting logging";
-     }
+    if (!ref_count++)
+    {
+      logger_facade_inst_priv.reset(new LoggerFacadeInstance(p_file_on_entry,
+                                                             p_file_on_exit));
+      getStreamWithDate() << "Starting logging";
+    }
   }
 
-  ~LoggerFacade ()
+  ~LoggerFacade()
   {
-   if (!--ref_count)
-     {
-      getStreamWithDate () << "Ending logging";
-       logger_facade_inst_priv.reset(nullptr);
-     }
+    if (!--ref_count)
+    {
+      getStreamWithDate() << "Ending logging";
+      logger_facade_inst_priv.reset(nullptr);
+    }
   }
 
-  std::ostream & getStream ()const
+  std::ostream & getStream()const
   {
-   return logger_facade_inst_priv->getStream ();
-  }
-  std::ostream & getStreamWithDate (const std::string & level) const
-  {
-   getStream () << level;
-   return getStreamWithDate ();
-  }
-  std::ostream & getStreamWithDate () const
-  {
-   std::time_t t = std::time (NULL);
-   char mbstr[100];
-   if (std::strftime (mbstr, sizeof (mbstr), "%A %c", std::localtime (&t)))
-     {
-      return getStream () << mbstr << " ";
-     }
-   throw std::runtime_error ("Unable to get date");
+    return logger_facade_inst_priv->getStream();
   }
 
-  std::ostream & getStreamWithDate (const std::string & level,
-				    const std::string & file,
-				    int line,
-				    const std::string & function) const
+  std::ostream & getStreamWithDate(const std::string & level) const
   {
-   return getStreamWithDate (level) << " " << file << ":" << line
-    << ": " << function << ": ";
+    getStream() << level;
+    return getStreamWithDate();
   }
-  std::ostream & getStreamWithDate (const std::string & file,
-				    int line,
-				    const std::string & function) const
+
+  std::ostream & getStreamWithDate() const
   {
-   return getStreamWithDate () << " " << file << ":" << line <<
-    ": " << function << ": ";
+    std::time_t t = std::time(NULL);
+    char mbstr[100];
+    if (std::strftime(mbstr, sizeof (mbstr), "%A %c", std::localtime(&t)))
+    {
+      return getStream() << mbstr << " ";
+    }
+    throw std::runtime_error("Unable to get date");
   }
-  static LoggerFacade & getLoggerFacade ()
+
+  std::ostream & getStreamWithDate(const std::string & level,
+                                   const std::string & file,
+                                   int line,
+                                   const std::string & function) const
   {
-      return *logger_facade_inst;
+    return getStreamWithDate(level) << " " << file << ":" << line
+      << ": " << function << ": ";
+  }
+
+  std::ostream & getStreamWithDate(const std::string & file,
+                                   int line,
+                                   const std::string & function) const
+  {
+    return getStreamWithDate() << " " << file << ":" << line <<
+      ": " << function << ": ";
+  }
+
+  static LoggerFacade & getLoggerFacade()
+  {
+    return *logger_facade_inst;
   }
 
 private:
+
   class LoggerFacadeInstance
   {
-    public:
-   LoggerFacadeInstance (bool facade_instance,
-		 LogFileOnEntry p_file_on_entry,
-		 LogFileOnExit p_file_on_exit)
-   {
-    logger.reset (new Logger (p_file_on_entry, p_file_on_exit));
-   }
-   
-  std::ostream & getStream ()const
-  {
-   return logger->getStream() << "\n";
-  }
+  public:
+
+    LoggerFacadeInstance(LogFileOnEntry p_file_on_entry,
+                         LogFileOnExit p_file_on_exit)
+    {
+      logger.reset(new Logger(p_file_on_entry, p_file_on_exit));
+    }
+
+    std::ostream & getStream()const
+    {
+      return logger->getStream() << "\n";
+    }
   private:
-  std::unique_ptr < Logger > logger;
+    std::unique_ptr < Logger > logger;
   };
 
   static unsigned ref_count;
   static std::unique_ptr < LoggerFacadeInstance > logger_facade_inst_priv;
   static std::unique_ptr < LoggerFacade > logger_facade_inst;
   static bool instance_created;
- };
+};
 
 }
+
+
