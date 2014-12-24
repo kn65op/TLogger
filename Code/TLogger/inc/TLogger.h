@@ -8,10 +8,11 @@
 #include <memory>
 #include <ctime>
 
+#define LOG TLogger::LoggerFacade::getLoggerFacade().getStreamWithDate(__FILE__, __LINE__, __PRETTY_FUNCTION__)
+
 namespace TLogger
 {
 
-#define LOG LoggerFacade::getLoggerFacade().getStreamWithDate(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 
 enum class LogFileOnEntry
 {
