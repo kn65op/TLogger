@@ -35,10 +35,10 @@ cmake_install.cmake
 
 #editors
 install_manifest.txt
-*.cmake
 *.kate-swp
 .*.swp
 *.stackdump
+Test/*.cmake
 
 #project
 Test/Exe
