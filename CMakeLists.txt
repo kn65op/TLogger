@@ -53,9 +53,6 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 	endif ("${NO_COVERAGE}" STREQUAL "true")
 	file(MAKE_DIRECTORY ${DEBUG_BIN_DIR})
 	#	set(EXE_FILE ${DEBUG_BIN_DIR}/${PROJECT_NAME})
-
-	#test
-	add_subdirectory(Test)
 elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 	file(MAKE_DIRECTORY ${RELEASE_BIN_DIR})
         set(EXE_FILE ${RELEASE_BIN_DIR}/${PROJECT_NAME})
