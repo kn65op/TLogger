@@ -11,10 +11,17 @@ struct TLoggerTest : Test
 
 TEST_F(TLoggerTest, ChechNoThrowOfContructorDefault)
 {
-  Logger logger;
+  LoggerFacade logger;
+  logger.getStreamWithDate() << "Only Date";
 }
 
 TEST_F(TLoggerTest, ChechNoThrowOfContructorWithAppendAndDestructorRemove)
 {
-  Logger logger{LogFileOnEntry::APPEND, LogFileOnExit::REMOVE};
+  LoggerFacade logger(LogFileOnEntry::APPEND, LogFileOnExit::REMOVE);
+  LOG << "log";
+}
+
+
+TEST(TimeTest, Time)
+{
 }
