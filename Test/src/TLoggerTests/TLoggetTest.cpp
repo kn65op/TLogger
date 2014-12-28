@@ -27,6 +27,11 @@ TEST_F(TLoggerTest, StdOutLoggerTest)
   LOG << "log";
 }
 
+TEST_F(TLoggerTest, StdErrLoggerTest)
+{
+  LoggerFacade logger(LoggerType::STDERR);
+  LOG << "log";
+}
 
 TEST(TimeTest, Time)
 {

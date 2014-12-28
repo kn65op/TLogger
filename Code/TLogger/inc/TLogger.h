@@ -30,6 +30,7 @@ enum class LogFileOnExit
 enum class LoggerType
 {
   STDOUT,
+  STDERR,
   FILE
 };
 
@@ -111,6 +112,20 @@ virtual std::ostream& getStream()
 }
 };
 
+class StdErrLogger : public ILogger
+{
+public:
+virtual ~StdErrLogger()
+{
+  std::cout << "\n";
+}
+  
+virtual std::ostream& getStream()
+{
+  return std::cerr;
+}
+};
+
 class LoggerFacade
 {
 private:
@@ -123,10 +138,11 @@ public:
     {
       case LoggerType::FILE:
         throw std::runtime_error("For logger type file use contructor with file options");
-      case LoggerType::STDOUT:
+      case LoggerType::STDOUT: //Fallthrough
+      case LoggerType::STDERR:
         if (!ref_count++)
         {
-          logger_facade_inst_priv.reset(new LoggerFacadeInstance());
+          logger_facade_inst_priv.reset(new LoggerFacadeInstance(p_type));
           getStreamWithDate() << "Starting logging";
         }
         break;
@@ -204,9 +220,19 @@ private:
   class LoggerFacadeInstance
   {
   public:
-    LoggerFacadeInstance()
+    LoggerFacadeInstance(LoggerType p_type)
     {
-      logger.reset(new StdOutLogger());
+      switch (p_type)
+      {
+        case LoggerType::STDOUT:
+          logger.reset(new StdOutLogger());
+          break;
+        case LoggerType::STDERR:
+          logger.reset(new StdErrLogger());
+          break;
+        default:
+          std::runtime_error("Invalid LoggerType");
+      }
     }
 
     LoggerFacadeInstance(LogFileOnEntry p_file_on_entry,
