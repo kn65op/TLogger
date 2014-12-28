@@ -21,6 +21,12 @@ TEST_F(TLoggerTest, ChechNoThrowOfContructorWithAppendAndDestructorRemove)
   LOG << "log";
 }
 
+TEST_F(TLoggerTest, StdOutLoggerTest)
+{
+  LoggerFacade logger(LoggerType::STDOUT);
+  LOG << "log";
+}
+
 
 TEST(TimeTest, Time)
 {

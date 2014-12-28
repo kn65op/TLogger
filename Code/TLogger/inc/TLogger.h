@@ -8,16 +8,16 @@
 #include <memory>
 #include <ctime>
 
-#define LOG TLogger::LoggerFacade::getLoggerFacade().getStreamWithDate(__FILE__, __LINE__, __PRETTY_FUNCTION__)
-
 namespace TLogger
 {
 
+#define LOG LoggerFacade::getLoggerFacade().getStreamWithDate(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 
 enum class LogFileOnEntry
 {
   OVERRIDE,
   APPEND,
+  STDOUT,
   THROW_EXCEPTION
 };
 
@@ -27,7 +27,22 @@ enum class LogFileOnExit
   DO_NOTHING
 };
 
-class Logger
+enum class LoggerType
+{
+  STDOUT,
+  FILE
+};
+
+class ILogger
+{
+public:
+  virtual ~ILogger() 
+  {}
+  
+  virtual std::ostream & getStream() = 0;
+};
+
+class Logger : public ILogger
 {
 public:
 
@@ -47,9 +62,16 @@ public:
     }
     }
   }
+  
+  std::ostream & getStream()
+  {
+    log_file.close();
+    log_file.open(filename, std::ios::app);
+    return log_file;
+  }
 private:
-  friend class LoggerFacade;
   friend class std::unique_ptr < Logger >;
+  friend class LoggerFacade;
 
   Logger(LogFileOnEntry p_file_on_entry, LogFileOnExit p_file_on_exit) :
     file_on_entry(p_file_on_entry), file_on_exit(p_file_on_exit)
@@ -68,18 +90,25 @@ private:
     log_file << "creating logger";
   }
 
-  std::ostream & getStream()
-  {
-    log_file.close();
-    log_file.open(filename, std::ios::app);
-    return log_file;
-  }
-
   const std::string filename = "TLogger.log";
   std::ofstream log_file;
 
   LogFileOnEntry file_on_entry;
   LogFileOnExit file_on_exit;
+};
+
+class StdOutLogger : public ILogger
+{
+public:
+virtual ~StdOutLogger()
+{
+  std::cout << "\n";
+}
+  
+virtual std::ostream& getStream()
+{
+  return std::cout;
+}
 };
 
 class LoggerFacade
@@ -88,6 +117,24 @@ private:
   class LoggerFacadeInstance;
 public:
 
+  LoggerFacade(LoggerType p_type)
+  {
+    switch (p_type)
+    {
+      case LoggerType::FILE:
+        throw std::runtime_error("For logger type file use contructor with file options");
+      case LoggerType::STDOUT:
+        if (!ref_count++)
+        {
+          logger_facade_inst_priv.reset(new LoggerFacadeInstance());
+          getStreamWithDate() << "Starting logging";
+        }
+        break;
+      default:
+        throw std::runtime_error("Invalid logger type");
+    }
+  }
+  
   LoggerFacade(LogFileOnEntry p_file_on_entry = LogFileOnEntry::OVERRIDE,
                LogFileOnExit p_file_on_exit = LogFileOnExit::DO_NOTHING)
   {
@@ -157,6 +204,10 @@ private:
   class LoggerFacadeInstance
   {
   public:
+    LoggerFacadeInstance()
+    {
+      logger.reset(new StdOutLogger());
+    }
 
     LoggerFacadeInstance(LogFileOnEntry p_file_on_entry,
                          LogFileOnExit p_file_on_exit)
@@ -169,7 +220,7 @@ private:
       return logger->getStream() << "\n";
     }
   private:
-    std::unique_ptr < Logger > logger;
+    std::unique_ptr < ILogger > logger;
   };
 
   static unsigned ref_count;
@@ -179,5 +230,3 @@ private:
 };
 
 }
-
-
