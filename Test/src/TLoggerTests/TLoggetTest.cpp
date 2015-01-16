@@ -6,7 +6,7 @@ using namespace TLogger;
 
 struct TLoggerTest : Test
 {
-  
+
 };
 
 TEST_F(TLoggerTest, ChechNoThrowOfContructorFile)
@@ -33,6 +33,4 @@ TEST_F(TLoggerTest, StdErrLoggerTest)
   LOG << "log";
 }
 
-TEST(TimeTest, Time)
-{
-}
+TEST(TimeTest, Time) { }
