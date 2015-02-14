@@ -12,3 +12,4 @@ set(TLOGGER_INCLUDE_DIRS TLogger/Code/TLogger/inc)
 # These are IMPORTED targets created by TLoggerTargets.cmake
 set(TLOGGER_LIBRARIES_DIR TLogger/${CMAKE_BUILD_TYPE})
 set(TLOGGER_LIBRARIES libTLogger.a)
+set(TLOGGER_TARGET TLogger)
