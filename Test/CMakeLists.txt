@@ -68,9 +68,9 @@ TARGET_LINK_LIBRARIES(${TEST_EXE} ${Boost_LIBRARIES} )
 add_test(gtests ${TEST_EXE}) 
 
 set(COVERAGE_DIR coverage)
-set(SOURCE_RAW_FILES_DIR "${CMAKE_BINARY_DIR}/Test/CMakeFiles/Exe/Tester.dir/__/Code")
-set(TLOGGER_LIB_RAW_FILES_DIR "${CMAKE_BINARY_DIR}/Test/CMakeFiles/Exe/Tester.dir/__/Code/tlogger/src")
-set(TLOGGER_LIB_COVERAGE_RAW_FILES "${CMAKE_BINARY_DIR}/Test/CMakeFiles/Exe/Tester.dir/__/Code/tlogger/src/*.gcda")
+set(SOURCE_RAW_FILES_DIR "${CMAKE_BINARY_DIR}/Test/CMakeFiles/Tester.dir/__/Code")
+set(TLOGGER_LIB_RAW_FILES_DIR "${CMAKE_BINARY_DIR}/Test/CMakeFiles/Tester.dir/__/Code/tlogger/src")
+set(TLOGGER_LIB_COVERAGE_RAW_FILES "${CMAKE_BINARY_DIR}/Test/CMakeFiles/Tester.dir/__/Code/tlogger/src/*.gcda")
 set(TLOGGER_LIB_O_FILES "${TLOGGER_LIB_COVERAGE_RAW_FILES_DIR}/*.o")
 
 add_custom_target(coverage)
