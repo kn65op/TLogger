@@ -55,13 +55,13 @@ public:
     switch (file_on_exit)
     {
       case LogFileOnExit::REMOVE:
-      {
+        {
         std::remove(filename.c_str());
         break;
       }
       case LogFileOnExit::DO_NOTHING: // Fallthrough
       default:
-      {
+        {
       }
     }
   }
@@ -93,8 +93,8 @@ private:
     static void handler()
     {
       std::cerr << "std::terminate called - logs written to: " << logger->filename << "\n";
-      logger->getStream() << "\nstd::terminate called!";
-      logger->~FileLogger();
+      logger->getStream() << "\nstd::terminate called!\n";
+      logger->getStream();
 
       old_handler();
     }
@@ -105,8 +105,8 @@ private:
 
   FileLogger(LogFileOnEntry p_file_on_entry, LogFileOnExit p_file_on_exit) :
       file_on_entry(p_file_on_entry),
-      file_on_exit(p_file_on_exit),
-      terminate_handler(this)
+          file_on_exit(p_file_on_exit),
+          terminate_handler(this)
   {
     switch (file_on_entry)
     {
@@ -167,8 +167,8 @@ private:
   public:
 
   LoggerFacade(LoggerType p_type,
-      LogFileOnEntry p_file_on_entry = LogFileOnEntry::OVERRIDE,
-      LogFileOnExit p_file_on_exit = LogFileOnExit::DO_NOTHING)
+               LogFileOnEntry p_file_on_entry = LogFileOnEntry::OVERRIDE,
+               LogFileOnExit p_file_on_exit = LogFileOnExit::DO_NOTHING)
   {
     logger_facade_inst.reset(new LoggerFacade);
     switch (p_type)
@@ -212,7 +212,7 @@ private:
   }
 
   std::ostream & getStreamWithDate(const std::string & level) const
-      {
+  {
     getStream() << level;
     return getStreamWithDate();
   }
@@ -229,18 +229,18 @@ private:
   }
 
   std::ostream & getStreamWithDate(const std::string & level,
-      const std::string & file,
-      int line,
-      const std::string & function) const
-      {
+                                   const std::string & file,
+                                   int line,
+          const std::string & function) const
+ {
     return getStreamWithDate(level) << " " << formatFile(file) << ":" << line
         << ": " << function << ": ";
   }
 
   std::ostream & getStreamWithDate(const std::string & file,
-      int line,
-      const std::string & function) const
-      {
+                                   int line,
+                                   const std::string & function) const
+  {
     return getStreamWithDate() << " " << formatFile(file) << ":" << line <<
         ": " << function << ": ";
   }
