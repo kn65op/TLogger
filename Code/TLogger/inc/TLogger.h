@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <exception>
 #include <cstdio>
 #include <memory>
 #include <ctime>
@@ -44,23 +45,23 @@ public:
   virtual std::ostream & getStream() = 0;
 };
 
-class Logger : public ILogger
+class FileLogger : public ILogger
 {
 public:
 
-  ~Logger()
+  ~FileLogger()
   {
     log_file << "\nremoving logger\n";
     switch (file_on_exit)
     {
       case LogFileOnExit::REMOVE:
-        {
+      {
         std::remove(filename.c_str());
         break;
       }
       case LogFileOnExit::DO_NOTHING: // Fallthrough
       default:
-        {
+      {
       }
     }
   }
@@ -72,10 +73,10 @@ public:
     return log_file;
   }
 private:
-  friend class std::unique_ptr<Logger>;
+  friend class std::unique_ptr<FileLogger>;
   friend class LoggerFacade;
 
-  Logger(LogFileOnEntry p_file_on_entry, LogFileOnExit p_file_on_exit) :
+  FileLogger(LogFileOnEntry p_file_on_entry, LogFileOnExit p_file_on_exit) :
       file_on_entry(p_file_on_entry), file_on_exit(p_file_on_exit)
   {
     switch (file_on_entry)
@@ -250,7 +251,7 @@ private:
     LoggerFacadeInstance(LogFileOnEntry p_file_on_entry,
         LogFileOnExit p_file_on_exit)
     {
-      logger.reset(new Logger(p_file_on_entry, p_file_on_exit));
+      logger.reset(new FileLogger(p_file_on_entry, p_file_on_exit));
     }
 
     std::ostream & getStream() const
