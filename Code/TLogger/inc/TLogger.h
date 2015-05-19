@@ -92,9 +92,7 @@ private:
   private:
     static void handler()
     {
-      std::cout << "A\n";
-      logger->getStream() << "\n";
-      logger->getStream() << "Crash!\n";
+      logger->getStream() << "\nstd::terminate called!";
       logger->~FileLogger();
 
       old_handler();
