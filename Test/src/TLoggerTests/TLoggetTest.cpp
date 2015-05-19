@@ -33,4 +33,11 @@ TEST_F(TLoggerTest, StdErrLoggerTest)
   LOG << "log";
 }
 
-TEST(TimeTest, Time) { }
+TEST_F(TLoggerTest, ChechWhatToDoOnCrash)
+{
+  LoggerFacade logger(LoggerType::FILE);
+  LOG << "before crash";
+  LOG << "just before crash";
+  throw 8;
+  LOG << "just after crash";
+}

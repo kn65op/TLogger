@@ -76,8 +76,38 @@ private:
   friend class std::unique_ptr<FileLogger>;
   friend class LoggerFacade;
 
+  class TerminateHandler
+  {
+  public:
+    ~TerminateHandler()
+    {
+      std::set_terminate(old_handler);
+    }
+    TerminateHandler(FileLogger *file_logger)
+    {
+      logger = file_logger;
+      old_handler = std::set_terminate(&TerminateHandler::handler);
+    }
+
+  private:
+    static void handler()
+    {
+      std::cout << "A\n";
+      logger->getStream() << "\n";
+      logger->getStream() << "Crash!\n";
+      logger->~FileLogger();
+
+      old_handler();
+    }
+
+    static FileLogger *logger;
+    static std::terminate_handler old_handler;
+  };
+
   FileLogger(LogFileOnEntry p_file_on_entry, LogFileOnExit p_file_on_exit) :
-      file_on_entry(p_file_on_entry), file_on_exit(p_file_on_exit)
+      file_on_entry(p_file_on_entry),
+      file_on_exit(p_file_on_exit),
+      terminate_handler(this)
   {
     switch (file_on_entry)
     {
@@ -98,6 +128,7 @@ private:
 
   LogFileOnEntry file_on_entry;
   LogFileOnExit file_on_exit;
+  TerminateHandler terminate_handler;
 };
 
 class StdOutLogger : public ILogger
