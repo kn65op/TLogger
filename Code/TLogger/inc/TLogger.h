@@ -92,7 +92,7 @@ private:
   private:
     static void handler()
     {
-      std::cerr << "std::terminate called - logs written to: " << logger->filename << "/n";
+      std::cerr << "std::terminate called - logs written to: " << logger->filename << "\n";
       logger->getStream() << "\nstd::terminate called!";
       logger->~FileLogger();
 
