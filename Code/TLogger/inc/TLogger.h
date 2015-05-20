@@ -7,17 +7,26 @@
 #include <exception>
 #include <cstdio>
 #include <memory>
-#include <ctime>
+#include <ctime> //TODO: remove when std::put_time will be available in gcc
+#include <sstream>
+#include <iomanip>
+#include <chrono>
 
 namespace TLogger
 {
 
 #define LOG TLogger::LoggerFacade::getLoggerFacade().getStreamWithDate(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 
+//TODO:
+//1. można podać prefix nazwę pliku, domylśnie TLogger w katalogu roboczym
+//2. Można dać create with date co tworzy za kazdym razem nowy plik o innej nazwie ms
+//3. Można dać właną prefix
+//nazwa prefix[data].log
 enum class LogFileOnEntry
 {
   OVERRIDE,
   APPEND,
+  CREATE_WITH_DATE,
   THROW_EXCEPTION
 };
 
@@ -103,30 +112,47 @@ private:
     static std::terminate_handler old_handler;
   };
 
-  FileLogger(LogFileOnEntry p_file_on_entry, LogFileOnExit p_file_on_exit) :
-      file_on_entry(p_file_on_entry),
-          file_on_exit(p_file_on_exit),
-          terminate_handler(this)
+  FileLogger(LogFileOnEntry p_file_on_entry, LogFileOnExit p_file_on_exit, const std::string& filename_prefix = "TLogger") :
+             prefix(filename_prefix),
+             file_on_exit(p_file_on_exit),
+             file_on_entry(p_file_on_entry),
+             terminate_handler(this)
   {
     switch (file_on_entry)
     {
       case LogFileOnEntry::OVERRIDE:
+        filename = prefix + extension;
         log_file.open(filename, std::ios::trunc);
         break;
       case LogFileOnEntry::APPEND:
+        filename = prefix + extension;
         log_file.open(filename, std::ios::app);
         break;
+      case LogFileOnEntry::CREATE_WITH_DATE:
+      {
+        std::time_t t = std::time(NULL);
+        char mbstr[100];
+        if (!std::strftime(mbstr, sizeof(mbstr), "%Y%m%d%H%M%S", std::localtime(&t)))
+        {
+          throw std::runtime_error("Unable to get date");
+        }
+        filename = prefix + mbstr + extension;
+        log_file.open(filename, std::ios::trunc);
+        break;
+      }
       case LogFileOnEntry::THROW_EXCEPTION:
         throw std::runtime_error("Not yet implemeted");
     }
     log_file << "creating logger";
   }
 
-  const std::string filename = "TLogger.log";
+  std::string filename;
+  const std::string prefix;
+  const std::string extension = ".log";
   std::ofstream log_file;
 
-  LogFileOnEntry file_on_entry;
   LogFileOnExit file_on_exit;
+  LogFileOnEntry file_on_entry;
   TerminateHandler terminate_handler;
 };
 
@@ -162,13 +188,12 @@ public:
 
 class LoggerFacade
 {
-private:
-  class LoggerFacadeInstance;
-  public:
+public:
 
   LoggerFacade(LoggerType p_type,
                LogFileOnEntry p_file_on_entry = LogFileOnEntry::OVERRIDE,
-               LogFileOnExit p_file_on_exit = LogFileOnExit::DO_NOTHING)
+               LogFileOnExit p_file_on_exit = LogFileOnExit::DO_NOTHING,
+               const std::string& prefix = "TLogger")
   {
     logger_facade_inst.reset(new LoggerFacade);
     switch (p_type)
@@ -177,7 +202,7 @@ private:
         if (!ref_count++)
         {
           logger_facade_inst_priv.reset(new LoggerFacadeInstance(p_file_on_entry,
-              p_file_on_exit));
+              p_file_on_exit, prefix));
           getStreamWithDate() << "Starting logging";
         }
         break;
@@ -251,7 +276,6 @@ private:
   }
 
 private:
-
   LoggerFacade()
   {
     ref_counted = false;
@@ -279,9 +303,10 @@ private:
     }
 
     LoggerFacadeInstance(LogFileOnEntry p_file_on_entry,
-        LogFileOnExit p_file_on_exit)
+                         LogFileOnExit p_file_on_exit,
+                         const std::string& prefix)
     {
-      logger.reset(new FileLogger(p_file_on_entry, p_file_on_exit));
+      logger.reset(new FileLogger(p_file_on_entry, p_file_on_exit, prefix));
     }
 
     std::ostream & getStream() const

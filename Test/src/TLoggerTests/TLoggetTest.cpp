@@ -33,11 +33,14 @@ TEST_F(TLoggerTest, StdErrLoggerTest)
   LOG << "log";
 }
 
-TEST_F(TLoggerTest, ChechWhatToDoOnCrash)
+TEST_F(TLoggerTest, CreateFileWithDate)
 {
-  LoggerFacade logger(LoggerType::FILE);
-  LOG << "before crash";
-  LOG << "just before crash";
-  throw 8;
-  LOG << "just after crash";
+  LoggerFacade logger(LoggerType::FILE, LogFileOnEntry::CREATE_WITH_DATE, LogFileOnExit::REMOVE);
+  LOG << "log";
+}
+
+TEST_F(TLoggerTest, CreateFileWithDateAndFilename)
+{
+  LoggerFacade logger(LoggerType::FILE, LogFileOnEntry::CREATE_WITH_DATE, LogFileOnExit::REMOVE, "logFile-");
+  LOG << "log";
 }
