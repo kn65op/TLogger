@@ -69,9 +69,7 @@ add_test(gtests ${TEST_EXE})
 
 set(COVERAGE_DIR coverage)
 set(SOURCE_RAW_FILES_DIR "${CMAKE_BINARY_DIR}/Test/CMakeFiles/Tester.dir/__/Code")
-set(TLOGGER_LIB_RAW_FILES_DIR "${CMAKE_BINARY_DIR}/Test/CMakeFiles/Tester.dir/__/Code/tlogger/src")
-set(TLOGGER_LIB_COVERAGE_RAW_FILES "${CMAKE_BINARY_DIR}/Test/CMakeFiles/Tester.dir/__/Code/tlogger/src/*.gcda")
-set(TLOGGER_LIB_O_FILES "${TLOGGER_LIB_COVERAGE_RAW_FILES_DIR}/*.o")
+set(COVERAGE_INFO tlogger.info)
 
 add_custom_target(coverage)
 add_custom_command(TARGET coverage
@@ -79,7 +77,7 @@ add_custom_command(TARGET coverage
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 add_custom_command(TARGET coverage
-	COMMAND rm -rf ${TLOGGER_LIB_COVERAGE_RAW_FILES} && ../${TEST_EXE}  && lcov -d  ${SOURCE_RAW_FILES_DIR} --capture --output-file tlogger.info && genhtml tlogger.info 
+	COMMAND find ${CMAKE_BINARY_DIR} -name *.gcda -exec rm {} "\;" && ../${TEST_EXE}  && lcov -d  ${SOURCE_RAW_FILES_DIR} --capture --output-file ${COVERAGE_INFO} && genhtml ${COVERAGE_INFO} WORKING_DIRECTORY ${COVERAGE_DIR}
 	WORKING_DIRECTORY ${COVERAGE_DIR})
 
 add_dependencies(coverage ${TEST_EXE})
