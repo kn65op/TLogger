@@ -64,8 +64,11 @@ public:
     switch (file_on_exit)
     {
       case LogFileOnExit::REMOVE:
+      {
+        if (!std::remove(filename.c_str()))
         {
-        std::remove(filename.c_str());
+          std::cerr << "Unable to remove log file: " << filename << "\n";
+        }
         break;
       }
       case LogFileOnExit::DO_NOTHING: // Fallthrough
