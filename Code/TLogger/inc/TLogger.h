@@ -17,11 +17,6 @@ namespace TLogger
 
 #define LOG TLogger::LoggerFacade::getLoggerFacade().getStreamWithDate(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 
-//TODO:
-//1. można podać prefix nazwę pliku, domylśnie TLogger w katalogu roboczym
-//2. Można dać create with date co tworzy za kazdym razem nowy plik o innej nazwie ms
-//3. Można dać właną prefix
-//nazwa prefix[data].log
 enum class LogFileOnEntry
 {
   OVERRIDE,
