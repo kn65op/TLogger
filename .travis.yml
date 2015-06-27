@@ -20,3 +20,18 @@ script:
   make -j `nproc` &&
   Test/Tester
 
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "UgYerSnwf1dxkJfVJRjzNOMD6Pz5mQkTbMSv2MVVNGFPd25UzK/KY6dzdjscoC2t30cDec4/6zbrpC/EN4s/D+/OWEjNo0ZWQfSTnzT24LFxFzOvK+nwOaaTyvh9ATCm41YltwQJ2DdLWF46o6Ic/VX687MN370/toF3kdwUd4avPOOdJudJeIf0Edj2KL6Us2XBu3qFYu1ANU4P7g0dIqY+sLYZKxIDQgVQvXrr0Ebmy/GcOys1/V+9Y6bs0T7Lb4SAilTnA01kwVVUXoDHcpjyYlPYkT65psHSELwzxju8Durd5bxGTyEGtm0TDTD09wM9fMozmNLJGHPJDXLX5WzYHyfOi/+S31uQ4RmPNsUdwTgbxccbUHaEt66SqqOjAXtaX731LG5flKi7YF3+60l8cBg7l2t4b6LcFg5vCRdbzvcz9KaBaUOGJpTxbuS75L3UjItQ7LShAJGN2spweF61OJ32yTKKMVB8K4ILUH5l78V+rHH8jcG8cwDIJZO1wbbC+t0hPPPQC4bz7c/lJQJk9ZMAqkZCsS20MgZEGhWiwumOXg0WZKen4EdvGQUv2KVdhjTGFymW/hmq4SLrtuCIOy8Wy6VMz8+c4EDn/6Kx9/OdfAW8Op29rFVta2ni3cfu9ZVtHI1PfHj6JjCCwA+RPliX2KWPYiz+BVYQOL8="
+
+addons:
+  coverity_scan:
+    project:
+      name: "kn65op/TLogger"
+      description: "Logger lib"
+    notification_email: kn65op+github@gmail.com
+    build_command_prepend: cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=Yes -DGMOCK_DIR=../gmock-1.7.0
+    build_command: make -j `nproc`
+    branch_pattern: coverity_scan
