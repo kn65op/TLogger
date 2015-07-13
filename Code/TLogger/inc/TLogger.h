@@ -60,7 +60,8 @@ public:
     {
       case LogFileOnExit::REMOVE:
       {
-        if (!std::remove(filename.c_str()))
+        log_file.close();
+        if (std::remove(filename.c_str()))
         {
           std::cerr << "Unable to remove log file: " << filename << "\n";
         }
