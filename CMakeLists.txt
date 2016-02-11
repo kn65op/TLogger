@@ -16,7 +16,7 @@ project (tlogger)
 ##FIND_PACKAGE( Boost 1.53 COMPONENTS program_options REQUIRED )
 
 #compiler options
-set(CMAKE_CXX_FLAGS "-std=c++1y")
+set(CMAKE_CXX_FLAGS "-std=c++14")
 
 if ("${NO_COVERAGE}" STREQUAL "true")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
