@@ -49,13 +49,16 @@ file(GLOB TLOGGER_LIB_FILES ${SRC_DIR}/TLogger/src/*.cpp)
 #executables
 if ("${NO_COVERAGE}" STREQUAL "true")
 else ("${NO_COVERAGE}" STREQUAL "true")
-	add_definitions(--coverage)
+  SET(GCC_COVERAGE_COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
+  SET(GCC_COVERAGE_LINK_FLAGS    "-lgcov")
+  SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
+  SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
 endif ("${NO_COVERAGE}" STREQUAL "true")
-		
-#test		
-if (${BUILD_TESTS})
-add_subdirectory(Test)		
-endif (${BUILD_TESTS})
+
+#test
+if (NOT "${NO_TEST}" STREQUAL "true")
+  add_subdirectory(Test)
+endif (NOT "${NO_TEST}" STREQUAL "true")
 
 #add_executable(${LIB_OUTPUT_FILE} ${MAIN_FILE} ${MAIN_FILES} ${ONE_MINUTE_CHANGES_FILES})
 add_library(${LIB_NAME} ${TLOGGER_LIB_FILES})
