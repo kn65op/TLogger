@@ -47,20 +47,15 @@ file(GLOB TLOGGER_LIB_FILES ${SRC_DIR}/TLogger/src/*.cpp)
 #file(GLOB MAIN_FILES ONE_MINUTE_CHANGES_FILES ${SRC_DIR}/Main/src/*.cpp)
 
 #executables
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	if ("${NO_COVERAGE}" STREQUAL "true")
-	else ("${NO_COVERAGE}" STREQUAL "true")
-		add_definitions(--coverage)
-	endif ("${NO_COVERAGE}" STREQUAL "true")
-			
-	#test		
-	if (${BUILD_TESTS})
-	add_subdirectory(Test)		
-	endif (${BUILD_TESTS})
-elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-else (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	message(FATAL_ERROR "Invalid build type. Can be Debug | Release")
-endif (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if ("${NO_COVERAGE}" STREQUAL "true")
+else ("${NO_COVERAGE}" STREQUAL "true")
+	add_definitions(--coverage)
+endif ("${NO_COVERAGE}" STREQUAL "true")
+		
+#test		
+if (${BUILD_TESTS})
+add_subdirectory(Test)		
+endif (${BUILD_TESTS})
 
 #add_executable(${LIB_OUTPUT_FILE} ${MAIN_FILE} ${MAIN_FILES} ${ONE_MINUTE_CHANGES_FILES})
 add_library(${LIB_NAME} ${TLOGGER_LIB_FILES})
